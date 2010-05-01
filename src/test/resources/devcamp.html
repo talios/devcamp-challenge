@@ -1,0 +1,98 @@
+<html xmlns:concordion="http://www.concordion.org/2007/concordion"
+      xmlns:talios="http://www.talios.com/2010/concordion">
+<head>
+    <title>Devcamp Coding Challenge</title>
+</head>
+<body>
+
+<h2>Synopsis</h2>
+
+<p>Accepts and stores users answers to gallup like questions on a scale of 1 (strongly agree)
+    to 5 (strongly disagree).</p>
+
+<h2>Requirements</h2>
+
+<ol>
+    <li><h3>Show an aggregate results of several users answers</h3>
+
+        <p>A list of questions and the vote counts associated with them can be <i>seen</i>
+            by performing a GET request to <span concordion:set="#url">http://localhost:8080/devcamp/</span>:</p>
+
+        <div class="example" concordion:echo="listQuestions(#url)"></div>
+    </li>
+
+    <li>
+        <h3>Allows the user to confirm their inputs.</h3>
+
+        <p>Voting for a question is performed via an HTTP PUT to
+            <span class="info" concordion:set="#url">http://localhost:8080/devcamp/vote</span>. In order to actually
+            vote the user must confirm their vote by supplying a 'confirm' parameter with the value of 'confirm'.
+            Votes are valid from 1 to 5.
+        </p>
+
+        <table concordion:execute="#response = voteResponse(#url, #id, #vote, #confirm)">
+
+            <tr>
+                <th concordion:set="#id">Question Id</th>
+                <th concordion:set="#vote">Vote Value</th>
+                <th concordion:set="#confirm">Confirm Code</th>
+                <th concordion:assertEquals="#response.code">Response Code</th>
+                <th concordion:echo="#response.content">Response Content</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td>5</td>
+                <td></td>
+                <td>412</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>0c6d5bfc-5e1f-455e-b46d-3b873868519a</td>
+                <td>5</td>
+                <td></td>
+                <td>412</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>0c6d5bfc-5e1f-455e-b46d-3b873868519a</td>
+                <td>5</td>
+                <td>confirm</td>
+                <td>200</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>0c6d5bfc-5e1f-455e-b46d-3b873868519a</td>
+                <td>1</td>
+                <td>confirm</td>
+                <td>200</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>0c6d5bfc-5e1f-455e-b46d-3b873868519a</td>
+                <td>0</td>
+                <td>confirm</td>
+                <td>412</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>0c6d5bfc-5e1f-455e-b46d-3b873868519a</td>
+                <td>6</td>
+                <td>confirm</td>
+                <td>412</td>
+                <td></td>
+            </tr>
+        </table>
+
+        <p>After succesfully voting, relisting the questions from <span class="info" concordion:set="#url">http://localhost:8080/devcamp/</span>
+            should revealing that the vote has
+            increased:</p>
+
+        <div class="example" concordion:echo="listQuestions(#url)"></div>
+    </li>
+
+    <li>Allow the addition of extra questions by users</li>
+</ol>
+
+
+</body>
+</html>
