@@ -1,23 +1,12 @@
 (ns com.devcamp.webapp
   (:gen-class :extends javax.servlet.http.HttpServlet)
-
   (:use clojure.contrib.json.write)
-  (:use clojure.contrib.duck-streams)
-  (:use clojure.contrib.logging)
   (:use compojure.control)
-  (:use compojure.html.gen)
-  (:use compojure.html.page-helpers)
-  (:use compojure.html.form-helpers)
   (:use compojure.http.helpers)
-  (:use compojure.http.multipart)
   (:use compojure.http.routes)
   (:use compojure.http.request)
   (:use compojure.http.servlet)
-  (:use compojure.http.session)
-  (:use compojure.map-utils)
-  (:use compojure.validation)
-
-  )
+  (:use compojure.http.session))
 
 (def *QUESTIONS* (ref [{:id "0c6d5bfc-5e1f-455e-b46d-3b873868519a" :votes 0 :question "i have clearly understood how i can progress in my workplace"}
                        {:id "71b78f5a-0607-45b7-891f-f092de885737" :votes 0 :question "i have a nemesis at work"}
@@ -32,10 +21,11 @@
   [id vote]
   (fn [question-map]
     (if (= id (:id question-map))
-      (assoc question-map :votes (+ (:votes question-map) (Integer/valueOf vote)))
+      (assoc question-map :votes (+ (:votes question-map) vote))
       question-map)))
 
 (defroutes devcamp-app
+
   (GET "/devcamp/"
     {:status 200
      :body (json-str @*QUESTIONS*)})
@@ -46,7 +36,7 @@
         (if (and (> voteValue 0) (< voteValue 6))
           (if (= "confirm" (:confirm params))
             (dosync
-              (ref-set *QUESTIONS* (map (vote-question (:id params) (:vote params)) @*QUESTIONS*))
+              (ref-set *QUESTIONS* (map (vote-question (:id params) voteValue) @*QUESTIONS*))
               {:status 200 :body (json-str {:status "Voted"})})
             {:status 412 :body (json-str {:status "Please confirm"})})
           {:status 412 :body (json-str {:status "Vote must be between 1 and 5"})})
