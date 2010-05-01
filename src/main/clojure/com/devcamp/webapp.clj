@@ -50,6 +50,13 @@
               {:status 200 :body (json-str {:status "Voted"})})
             {:status 412 :body (json-str {:status "Please confirm"})})
           {:status 412 :body (json-str {:status "Vote must be between 1 and 5"})})
-      {:status 412 :body (json-str {:status "Id must be specified"})}))))
+        {:status 412 :body (json-str {:status "Id must be specified"})})))
+
+  (POST "/devcamp/newquestion"
+    (dosync
+      (let [new-id (.toString (java.util.UUID/randomUUID))
+            new-question {:id new-id :votes 0 :question (:question params)}]
+        (ref-set *QUESTIONS* (conj @*QUESTIONS* new-question))
+        {:status 201 :body (json-str new-question)}))))
 
 (defservice devcamp-app)

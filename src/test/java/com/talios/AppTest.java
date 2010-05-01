@@ -86,6 +86,26 @@ public class AppTest {
 
     }
 
+    public TestResponse addQuestion(String url, String question) {
+
+
+        HttpClient client = new HttpClient();
+        PostMethod putMethod = new PostMethod();
+        putMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        putMethod.setRequestBody("question=" + question);
+        putMethod.setPath(url);
+        try {
+            client.executeMethod(putMethod);
+
+            return new TestResponse("" + putMethod.getStatusLine().getStatusCode(), putMethod.getResponseBodyAsString());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
     public static class TestResponse {
         public String code;
         public String content;

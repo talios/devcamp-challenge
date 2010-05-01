@@ -90,7 +90,19 @@
         <div class="example" concordion:echo="listQuestions(#url)"></div>
     </li>
 
-    <li>Allow the addition of extra questions by users</li>
+    <li>
+        <h3>Allow the addition of extra questions by users</h3>
+        <p>Adding a new question can be done by POSTing to <span concordion:set="#url">http://localhost:8080/devcamp/newquestion</span> with a 'question'
+        parameter of
+        <span concordion:execute="#response = addQuestion(#url, #TEXT)">Some new question</span> a result code of
+            <span concordion:assertEquals="#response.code">201</span> and the new question should appear in the question list:</p>
+
+        <p>After succesfully adding a question, relisting the questions from <span class="info" concordion:set="#url">http://localhost:8080/devcamp/</span>
+            should reveal that the new question has been added:</p>
+
+        <div class="example" concordion:echo="listQuestions(#url)"></div>
+
+    </li>
 </ol>
 
 
